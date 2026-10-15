@@ -10,6 +10,8 @@ export interface TrainingContext {
 
   weekParity: 'odd' | 'even';
 
+  weekDates: Record<string, string>;
+
   profile: string;
   trainingContext: string;
   availability: string;

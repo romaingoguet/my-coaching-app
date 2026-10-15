@@ -54,7 +54,8 @@ export class TrainingContextBuilder {
       recentWellness,
       athleteMetrics,
       weekParity: weekInfos.weekParity,
-      actualWeekMondayDate
+      actualWeekMondayDate,
+      weekDates: this.getWeekDates(actualWeekMondayDate)
     };
 
     return response
@@ -67,6 +68,34 @@ export class TrainingContextBuilder {
 
   private formatDate(date: Date): string {
     return date.toISOString().slice(0, 10);
+  }
+
+  private getWeekDates(weekStart: string): Record<string, string> {
+    const [year, month, day] = weekStart.split('-').map(Number);
+
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    const days = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ];
+
+    return Object.fromEntries(
+      days.map((dayName, index) => {
+        const current = new Date(date);
+        current.setUTCDate(date.getUTCDate() + index);
+
+        return [
+          dayName,
+          current.toISOString().slice(0, 10),
+        ];
+      }),
+    );
   }
 
   private getIsoWeekInfo(date: Date): { weekNumber: number; weekParity: 'odd' | 'even' } {
