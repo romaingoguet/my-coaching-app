@@ -6,10 +6,11 @@ import { CoachService } from "./CoachService.js";
 import { LlmService } from "./LlmService.js";
 import { PromptBuilder } from "./PrompBuilder.js";
 import { IntervalsWorkoutsModule } from "../intervals-workouts/intervals-workouts.module.js";
+import { ReviewWeekTrainingStorageService } from "./review-week-training-storage.service.js";
 
 @Module({
     imports: [IntervalsModule, IntervalsWorkoutsModule],
     controllers: [CoachController],
-    providers: [TrainingContextBuilder, CoachService, LlmService, PromptBuilder],
+    providers: [TrainingContextBuilder, CoachService, LlmService, PromptBuilder, ReviewWeekTrainingStorageService],
 })
 export class CoachModule { }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TrainingContextBuilder } from './TrainingContextBuilder.js';
 import { LlmService } from './LlmService.js';
 import { TrainingPlan } from '../intervals-workouts/training-plan.types.js';
+import { ReviewWeekTrainingStorageService } from './review-week-training-storage.service.js';
 
 export interface ReviewWeekTrainingResponse {
   review: string;
@@ -13,8 +14,8 @@ export class CoachService {
   constructor(
     private readonly contextBuilder: TrainingContextBuilder,
     private readonly llmService: LlmService,
+    private readonly storageService: ReviewWeekTrainingStorageService,
   ) { }
-
   async generatePlan(): Promise<TrainingPlan> {
     const context = await this.contextBuilder.build();
 
@@ -28,10 +29,17 @@ export class CoachService {
     // Filter to only include Monday-Sunday trainings of the current week
     const mondaySundayTrainings = this.filterMondaySundayTrainings(context.recentActivities);
 
-    return this.llmService.generateReviewWeekTraining(
+    const result = await this.llmService.generateReviewWeekTraining(
       { ...context, filteredActivities: mondaySundayTrainings } as any,
     );
+
+    // Save to JSON file
+    await this.storageService.save(result);
+
+    return result;
   }
+
+
 
   private filterMondaySundayTrainings(activities: any[]) {
     // Filter activities to only include those from Monday to Sunday of the current week
