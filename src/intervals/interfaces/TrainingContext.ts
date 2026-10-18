@@ -17,6 +17,8 @@ export interface TrainingContext {
   availability: string;
 
   recentActivities: Activity[];
+  filteredRecentActivities?: Activity[]; // Optional filtered activities for review
+
   recentWellness: Wellness[];
   athleteMetrics: AthleteMetrics;
 

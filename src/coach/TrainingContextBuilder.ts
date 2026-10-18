@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { IntervalsService } from '../intervals/intervals.services.js';
 import { TrainingContext } from '../intervals/interfaces/TrainingContext.js';
+import { Activity } from '../intervals/interfaces/Activity.js';
 
 
 @Injectable()
@@ -51,6 +52,60 @@ export class TrainingContextBuilder {
       trainingContext,
       availability,
       recentActivities,
+      recentWellness,
+      athleteMetrics,
+      weekParity: weekInfos.weekParity,
+      actualWeekMondayDate,
+      weekDates: this.getWeekDates(actualWeekMondayDate)
+    };
+
+    return response
+  }
+
+  async buildForReview(): Promise<TrainingContext> {
+    const currentDate = new Date();
+    const today = this.formatDate(currentDate);
+
+    // Fenêtre de données récentes et événements futurs
+    const oldest = this.formatDate(
+      new Date(currentDate.getTime() - 28 * 24 * 60 * 60 * 1000),
+    );
+
+    const newest = this.formatDate(
+      new Date(currentDate.getTime() + 56 * 24 * 60 * 60 * 1000),
+    );
+
+    const [
+      profile,
+      trainingContext,
+      availability,
+      recentActivities,
+      recentWellness,
+      athleteMetrics,
+      weekInfos,
+      actualWeekMondayDate
+    ] = await Promise.all([
+      this.readMarkdown('./config/profile.md'),
+      this.readMarkdown('./config/training.md'),
+      this.readMarkdown('./config/availability.md'),
+
+      this.intervalsService.getActivities(oldest, today),
+      this.intervalsService.getWellness(oldest, today),
+      this.intervalsService.getAthlete(),
+      this.getIsoWeekInfo(new Date(this.getNextMonday())),
+      this.getCurrentWeekMonday(new Date())
+    ]);
+
+    // Filter activities to only include Monday-Sunday trainings of the current week
+    const mondaySundayTrainings = this.filterMondaySundayTrainings(recentActivities);
+
+    const response = {
+      date: currentDate.toISOString(),
+      profile,
+      trainingContext,
+      availability,
+      recentActivities,
+      filteredRecentActivities: mondaySundayTrainings,
       recentWellness,
       athleteMetrics,
       weekParity: weekInfos.weekParity,
@@ -155,5 +210,32 @@ export class TrainingContextBuilder {
 
     return `${year}-${month}-${dayOfMonth}`;
   }
-}
 
+  private filterMondaySundayTrainings(activities: Activity[]): Activity[] {
+    const today = new Date();
+    const currentWeekMonday = this.getCurrentWeekMonday(today);
+
+    return activities.filter(activity => {
+      const activityDate = new Date(activity.date);
+
+      // Get the Monday of the week containing the activity
+      const activityWeekMonday = this.getWeekMonday(activityDate);
+
+      // Check if the activity falls within the current week (Monday to Sunday)
+      return activityWeekMonday === currentWeekMonday;
+    });
+  }
+
+  private getWeekMonday(date: Date): string {
+    const day = date.getDay(); // Dimanche = 0, lundi = 1, ...
+
+    const daysSinceMonday = (day + 6) % 7;
+    date.setDate(date.getDate() - daysSinceMonday);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const dayOfMonth = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${dayOfMonth}`;
+  }
+}

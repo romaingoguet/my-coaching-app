@@ -11,4 +11,9 @@ export class CoachController {
     async getCoachData() {
         return await this.coachService.generatePlan()
     }
+
+    @Get('/review-week-training')
+    async getReviewWeekTraining() {
+        return await this.coachService.getReviewWeekTraining()
+    }
 }

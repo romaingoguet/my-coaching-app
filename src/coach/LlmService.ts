@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+﻿import { Injectable } from "@nestjs/common";
 import { PromptBuilder } from "./PrompBuilder.js";
 import { TrainingContext } from "../intervals/interfaces/TrainingContext.js";
 import OpenAI from "openai";
@@ -50,46 +50,6 @@ export class LlmService {
             }
         });
 
-        // const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY });
-
-        // const response = await client.chat.complete({
-        //     model: "mistral-large-latest",
-        //     messages: [
-        //         {
-        //             role: 'system',
-        //             content: this.promptBuilder.buildInstructions(),
-        //         },
-        //         {
-        //             role: 'user',
-        //             content: this.promptBuilder.buildContextMessage(context),
-        //         },
-        //     ],
-        // });
-
-        // console.log(response.choices[0]?.message?.content);
-
-        // const response = await this.openai.responses.parse({
-        //     model: 'gpt-5.5',
-        //     input: [
-        //         {
-        //             role: 'system',
-        //             content: this.promptBuilder.buildInstructions(),
-        //         },
-        //         {
-        //             role: 'user',
-        //             content: this.promptBuilder.buildContextMessage(context),
-        //         },
-        //     ],
-        //     text: {
-        //         format: zodTextFormat(
-        //             TrainingPlanSchema,
-        //             'training_plan',
-        //         ),
-        //     },
-        // });
-
-        // const plan = response.output_parsed;
-
         if (!response.text) {
             throw new Error('Réponse vide de Gemini');
         }
@@ -98,7 +58,7 @@ export class LlmService {
 
         if (!plan) {
             throw new Error(
-                'Le LLM n’a pas retourné de plan exploitable.',
+                'Le LLM n\'a pas retourné de plan exploitable.',
             );
         }
 
@@ -106,9 +66,62 @@ export class LlmService {
 
         const publishResponse = await this.publisher.publish(JSON.parse(plan));
 
-        //console.log(publishResponse)
-
         // Validation explicite côté application
         return TrainingPlanSchema.parse(JSON.parse(plan));
+    }
+
+    async generateReviewWeekTraining(
+        context: TrainingContext,
+    ): Promise<{ review: string; date: string }> {
+
+        const ai = new GoogleGenAI({});
+
+        const systemInstruction = this.promptBuilder.buildReviewInstructions();
+
+
+        // 2. On prépare le message de l'utilisateur (ou l'historique) au format Gemini
+        const contents: Content[] = [
+            {
+                role: 'user',
+                parts: [
+                    {
+                        text: this.promptBuilder.buildContextMessage(context)
+                    }
+                ],
+            },
+        ];
+
+        // 3. Appel à l'API Gemini
+        const response = await ai.models.generateContent({
+            model: "gemini-3.1-flash-lite",
+            contents: contents,
+            config: {
+                systemInstruction: systemInstruction,
+                responseMimeType: 'application/json',
+                responseSchema: z.toJSONSchema(
+                    z.object({
+                        review: z.string(),
+                        date: z.string().date(),
+                    })),
+            }
+        });
+
+        if (!response.text) {
+            throw new Error('Réponse vide de Gemini');
+        }
+
+        const result = response.text;
+
+        if (!result) {
+            throw new Error(
+                'Le LLM n\'a pas retourné de review exploitable.',
+            );
+        }
+
+        // Validation explicite côté application
+        return z.object({
+            review: z.string(),
+            date: z.string().date(),
+        }).parse(JSON.parse(result));
     }
 }
