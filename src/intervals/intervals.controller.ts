@@ -11,6 +11,6 @@ export class IntervalsController {
 
     @Get()
     async getAthlete(): Promise<Activity[]> {
-        return await this.intervalsService.getActivities('2026-10-01','2026-10-09' );
+        return await this.intervalsService.getActivities('2026-10-01', '2026-10-09');
     }
 }

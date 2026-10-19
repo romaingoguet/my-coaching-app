@@ -9,6 +9,7 @@ export class CoachController {
 
     @Get()
     async getCoachData() {
+        console.log('calling /coach')
         return await this.coachService.generatePlan()
     }
 
