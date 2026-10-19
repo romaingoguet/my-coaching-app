@@ -36,10 +36,12 @@ Pour chaque séance :
   - 'powerTarget' : cible de puissance exprimée en pourcentage de la FTP, avec 'minPercent' et 'maxPercent', si une cible de puissance est pertinente ;
   - 'instructions' : consignes concrètes d'exécution, de cadence, de régularité ou de perception de l'effort.
 - Les cibles de puissance doivent être cohérentes avec l'objectif de la séance et les capacités actuelles de l'athlète. N'invente pas de FTP si elle est inconnue.
+**Pour les échauffements (début) et retours au calme (fin)** : inclure toujours un 'powerTarget' large (ex: 40-55% ou 50-60%) pour guider l'effort, même sans objectif physiologique précis.
 - Si une cible de puissance n'est pas pertinente ou si les données nécessaires manquent, omets 'powerTarget' et décris l'effort avec des consignes compréhensibles.
 - 'totalDurationMinutes' doit correspondre à la somme des durées de toutes les étapes.
 - Les répétitions doivent être représentées par des étapes explicites et ordonnées. Ne décris pas uniquement un bloc d'intervalle dans du texte libre.
 - Les durées et intensités doivent être réalisables et compatibles avec la disponibilité du jour.
+**Toutes les étapes (y compris échauffement et retour au calme) doivent avoir un powerTarget défini**, sauf pour les pauses actives très courtes (< 5 min).
 - Les séances doivent tenir compte de la fatigue récente, des sorties déjà effectuées, des événements à venir et de la musculation réalisée indépendamment par l'athlète.
 - Ne remplis pas systématiquement toutes les disponibilités. Préserve la flexibilité des sorties du week-end.
 
