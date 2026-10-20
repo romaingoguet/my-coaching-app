@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { IntervalsWorkoutMapper } from './intervals-workout.mapper.js';
-import { IntervalsWorkoutService } from './intervals-workout.service.js';
+import { IntervalsWorkoutService } from './interval-workouts.service.js';
 import { TrainingPlanPublisherService } from './training-plan-publisher.service.js';
 
 @Module({

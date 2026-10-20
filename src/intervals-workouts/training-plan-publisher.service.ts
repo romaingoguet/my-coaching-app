@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IntervalsWorkoutEvent, IntervalsWorkoutMapper } from './intervals-workout.mapper.js';
-import { IntervalsWorkoutService } from './intervals-workout.service.js';
+import { IntervalsWorkoutService } from './interval-workouts.service.js';
 import { TrainingPlan, TrainingPlanSchema } from './training-plan.types.js';
 
 
@@ -25,3 +25,4 @@ export class TrainingPlanPublisherService {
     return { publishedEvents, apiResponse };
   }
 }
+

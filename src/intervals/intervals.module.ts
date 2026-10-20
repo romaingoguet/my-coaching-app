@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { IntervalsController } from "./athlete.controllers.js";
 import { IntervalsClient } from "./intervals.client.js";
 import { IntervalsService } from "./intervals.services.js";
-import { WellnessService } from "./workwellness.service.js";
+import { WellnessService } from "./work-wellness.service.js";
 
 
 @Module({

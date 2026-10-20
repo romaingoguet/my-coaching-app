@@ -3,7 +3,7 @@ import { IntervalsService } from "./intervals.services.js";
 import { Wellness } from "./interfaces/Wellness.js";
 import { AthleteMetrics } from "./mappers/IntervalsIcuMapper.js";
 import { Activity } from "./interfaces/Activity.js";
-import { WellnessService } from "./workwellness.service.js";
+import { WellnessService } from "./work-wellness.service.js";
 
 @Controller('athlete')
 export class IntervalsController {
