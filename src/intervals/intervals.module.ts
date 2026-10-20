@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
-import { IntervalsController } from "./intervals.controller.js";
-import { WellnessController } from "./wellness.controller.js";
+import { IntervalsController } from "./athlete.controllers.js";
 import { IntervalsClient } from "./intervals.client.js";
 import { IntervalsService } from "./intervals.services.js";
 import { WellnessService } from "./workwellness.service.js";
@@ -8,7 +7,7 @@ import { WellnessService } from "./workwellness.service.js";
 
 @Module({
     imports: [],
-    controllers: [IntervalsController, WellnessController],
+    controllers: [IntervalsController],
     providers: [IntervalsClient, IntervalsService, WellnessService],
     exports: [IntervalsService]
 })

@@ -8,7 +8,7 @@ async function loadWellnessAndActivities() {
     try {
         // Fetch wellness data and activities in parallel
         const [wellnessResponse, activitiesResponse] = await Promise.all([
-            fetch(`${API_BASE_URL}/wellness`),
+            fetch(`${API_BASE_URL}/athlete/wellness`),
             fetch(`${API_BASE_URL}/athlete`)
         ]);
 
