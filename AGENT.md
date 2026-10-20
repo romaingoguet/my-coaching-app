@@ -48,6 +48,29 @@ This is a **NestJS coaching application** that uses AI models (Gemini, OpenAI, M
 - ✅ Use async/await consistently
 - ❌ No JSDoc comments needed (unless documenting public APIs)
 
+### NestJS Naming Conventions
+
+All NestJS files must follow the standard kebab-case naming convention:
+
+| Type | Convention | Example |
+|------|-----------|----------------|
+| **Controllers** | `controller-name.controller.ts` | `app.controller.ts`, `athlete.controller.ts` |
+| **Services** | `service-name.service.ts` | `work-wellness.service.ts`, `interval-workouts.service.ts` |
+| **Modules** | `module-name.module.ts` | `coach.module.ts`, `intervals.module.ts` |
+
+**Rules:**
+- Use **kebab-case** for the entity name (lowercase with hyphens)
+- Append appropriate suffix: `.controller`, `.service`, `.module`, etc.
+- Keep it lowercase and descriptive
+- Update all import statements when renaming files
+
+Examples of correct naming:
+- ✅ `work-wellness.service.ts` (not `workwellness.service.ts`)
+- ✅ `interval-workouts.service.ts` (not `intervals-workout.service.ts`)
+- ✅ `training-plan-publisher.service.ts`
+
+---
+
 ### AI Integration Pattern
 
 ```typescript
