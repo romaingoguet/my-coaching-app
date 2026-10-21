@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://my-coaching-app-fjao.onrender.com';
 
 // DOM elements
 const contentDiv = document.getElementById('content');
@@ -154,7 +154,7 @@ function createScheduleList(sessions) {
 
         return `
                     <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500 hover:bg-blue-100 transition">
-                        <h3 class="font-semibold text-gray-800">${session.title || 'Session'}</h3>
+                        <h3 class="font-semibold text-gray-800">${session.tite || 'Session'}</h3>
                         <p class="text-sm text-gray-600 mt-1">📅 ${dayName} - ${formatDate(session.date)}</p>
                         ${session.time ? `<p class="text-sm text-gray-500">⏰ Time: ${session.time}</p>` : ''}
                         ${session.description ? `<p class="text-sm text-gray-500 mt-2">${session.description}</p>` : ''}
