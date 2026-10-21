@@ -1,7 +1,6 @@
 ﻿import { Injectable } from "@nestjs/common";
 import { PromptBuilder } from "./PrompBuilder.js";
 import { TrainingContext } from "../intervals/interfaces/TrainingContext.js";
-import OpenAI from "openai";
 import { Content, GoogleGenAI } from "@google/genai";
 import { z } from 'zod';
 import { TrainingPlan, TrainingPlanSchema } from "../intervals-workouts/training-plan.types.js";
@@ -10,9 +9,6 @@ import { TrainingPlanPublisherService } from "../intervals-workouts/training-pla
 
 @Injectable()
 export class LlmService {
-    private readonly openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-    });
 
     constructor(
         private readonly promptBuilder: PromptBuilder,
