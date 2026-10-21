@@ -1,8 +1,14 @@
-// API Base URL - adjust if needed
-const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = 'https://my-coaching-app-fjao.onrender.com';
 
 // DOM elements
 const contentDiv = document.getElementById('content');
+
+function getBaseUrl() {
+    if (process) {
+        return process.env.API_BASE_URL;
+    }
+    return API_BASE_URL
+}
 
 async function loadWellnessAndActivities() {
     try {
