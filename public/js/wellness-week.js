@@ -1,5 +1,5 @@
 // API Base URL - adjust if needed
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
 
 // DOM elements
 const contentDiv = document.getElementById('content');
