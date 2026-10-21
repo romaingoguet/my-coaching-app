@@ -10,11 +10,10 @@ export class IntervalsController {
 
     constructor(private readonly intervalsService: IntervalsService, private readonly wellnessService: WellnessService) { }
 
-    @Get()
-    async getAthlete(): Promise<Activity[]> {
-        return await this.intervalsService.getActivities('2026-10-01', '2026-10-09');
+    @Get('/activities')
+    async getActivities(): Promise<Activity[]> {
+        return await this.intervalsService.getActivitiesForCurrentWeek();
     }
-
     @Get('/wellness')
     async getWellness(): Promise<any[]> {
         return await this.wellnessService.getWellness();

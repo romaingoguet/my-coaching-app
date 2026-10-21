@@ -9,7 +9,7 @@ async function loadWellnessAndActivities() {
         // Fetch wellness data and activities in parallel
         const [wellnessResponse, activitiesResponse] = await Promise.all([
             fetch(`${API_BASE_URL}/athlete/wellness`),
-            fetch(`${API_BASE_URL}/athlete`)
+            fetch(`${API_BASE_URL}/athlete/activities`)
         ]);
 
         if (!wellnessResponse.ok || !activitiesResponse.ok) {
@@ -110,18 +110,33 @@ function createWellnessCards(data) {
 function createActivitiesList(activities) {
     return `
         <div class="space-y-4">
-            ${activities.map(activity => `
-                <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition">
-                    <h3 class="font-semibold text-gray-800">${activity.name || 'Activity'}</h3>
-                    <p class="text-sm text-gray-600 mt-1">📅 ${formatDate(activity.date)}</p>
-                    ${activity.distance ? `<p class="text-sm text-gray-500">🏃 Distance: ${(parseFloat(activity.distance) / 1000).toFixed(2)} km</p>` : ''}
-                    ${activity.duration ? `<p class="text-sm text-gray-500">⏱️ Duration: ${formatDuration(parseInt(activity.duration))}</p>` : ''}
-                    ${activity.power_avg ? `<p class="text-sm text-gray-500">⚡ Avg Power: ${parseInt(activity.power_avg)} W</p>` : ''}
-                    ${activity.distance && activity.duration ? `<p class="text-sm text-gray-500">🐌 Pace: ${(parseFloat(activity.distance) / parseFloat(activity.duration) * 60).toFixed(2)} min/km</p>` : ''}
-                </div>
-            `).join('')}
+            ${activities.map(activity => {
+        const date = new Date(activity.date);
+        const dayName = getFrenchDayAbbreviation(date.getDay());
+
+        return `
+                    <div class="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition">
+                        <h3 class="font-semibold text-gray-800">${activity.name || 'Activity'}</h3>
+                        <p class="text-sm text-gray-600 mt-1">📅 ${dayName} - ${formatDate(activity.date)}</p>
+                        ${activity.distanceMeters ? `<p class="text-sm text-gray-500">🏃 Distance: ${(parseFloat(activity.distanceMeters) / 1000).toFixed(2)} km</p>` : ''}
+                        ${activity.durationSeconds ? `<p class="text-sm text-gray-500">⏱️ Duration: ${formatDuration(parseInt(activity.durationSeconds))}</p>` : ''}
+                        ${activity.averagePowerWatts ? `<p class="text-sm text-gray-500">⚡ Avg Power: ${parseInt(activity.averagePowerWatts)} W</p>` : ''}
+                    </div>
+                `;
+    }).join('')}
         </div>
     `;
+}
+
+function getFrenchDayAbbreviation(dayIndex) {
+    // dayIndex: 0=Sunday, 1=Monday, ..., 6=Saturday
+    const frenchDays = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    return frenchDays[dayIndex];
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
 }
 
 function createMetricCard(title, value, unit, icon) {

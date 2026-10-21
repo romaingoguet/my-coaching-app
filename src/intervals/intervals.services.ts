@@ -35,4 +35,25 @@ export class IntervalsService {
 
     return IntervalsIcuMapper.toAthleteMetrics(response);
   }
+
+  async getActivitiesForCurrentWeek(): Promise<Activity[]> {
+    const today = new Date();
+
+    // Calculate Monday of current week (Monday is day 0)
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+
+    // Calculate Sunday of current week
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+    // Format dates as YYYY-MM-DD
+    const formatDate = (date: Date): string => {
+      return date.toISOString().split('T')[0];
+    };
+
+    return await this.getActivities(formatDate(startOfWeek), formatDate(endOfWeek));
+  }
+
 }
+
