@@ -3,13 +3,12 @@ export interface TrainingPlan {
   sessions: PlannedSession[];
 }
 
-interface PlannedSession {
-  date: string;
-  title: string;
-  durationMinutes: number;
+export interface PlannedSession {
+  date: string; // start_date_local from API
+  title: string; // name from API
+  durationMinutes: number; // moving_time / 60 from API
 
-  objective: string;
-
+  objective: string; // description from API
   workout?: {
     type: string;
     description: string;

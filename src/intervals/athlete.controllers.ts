@@ -4,6 +4,7 @@ import { Wellness } from "./interfaces/Wellness.js";
 import { AthleteMetrics } from "./mappers/IntervalsIcuMapper.js";
 import { Activity } from "./interfaces/Activity.js";
 import { WellnessService } from "./work-wellness.service.js";
+import { PlannedSession } from "./interfaces/TrainingPlan.js";
 
 @Controller('athlete')
 export class IntervalsController {
@@ -22,6 +23,11 @@ export class IntervalsController {
     @Get('/wellness/latest')
     async getLatestWellness(): Promise<any | null> {
         return await this.wellnessService.getLatestWellness();
+    }
+
+    @Get('/schedule/next')
+    async getNextScheduledSession(): Promise<PlannedSession[]> {
+        return await this.intervalsService.getNextScheduledSession();
     }
 }
 

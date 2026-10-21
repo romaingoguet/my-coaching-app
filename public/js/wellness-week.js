@@ -1,32 +1,34 @@
-const API_BASE_URL = 'https://my-coaching-app-fjao.onrender.com';
+const API_BASE_URL = 'http://localhost:3000';
 
 // DOM elements
 const contentDiv = document.getElementById('content');
 
 function getBaseUrl() {
-    if (process) {
-        return process.env.API_BASE_URL;
+    if (typeof process === "undefined") {
+        return API_BASE_URL;
     }
-    return API_BASE_URL
+    return process.env.API_BASE_URL || API_BASE_URL;
 }
 
 async function loadWellnessAndActivities() {
     try {
-        // Fetch wellness data and activities in parallel
-        const [wellnessResponse, activitiesResponse] = await Promise.all([
-            fetch(`${API_BASE_URL}/athlete/wellness`),
-            fetch(`${API_BASE_URL}/athlete/activities`)
+        // Fetch wellness data, activities, and upcoming sessions in parallel
+        const [wellnessResponse, activitiesResponse, scheduleResponse] = await Promise.all([
+            fetch(`${getBaseUrl()}/athlete/wellness`),
+            fetch(`${getBaseUrl()}/athlete/activities`),
+            fetch(`${getBaseUrl()}/athlete/schedule/next`)
         ]);
 
-        if (!wellnessResponse.ok || !activitiesResponse.ok) {
+        if (!wellnessResponse.ok || !activitiesResponse.ok || !scheduleResponse.ok) {
             throw new Error('Failed to load data');
         }
 
         const wellnessData = await wellnessResponse.json();
         const activitiesData = await activitiesResponse.json();
+        const scheduleData = await scheduleResponse.json();
 
         // Render the content
-        renderContent(wellnessData, activitiesData);
+        renderContent(wellnessData, activitiesData, scheduleData);
     } catch (error) {
         console.error('Error loading data:', error);
         contentDiv.innerHTML = `
@@ -38,7 +40,7 @@ async function loadWellnessAndActivities() {
     }
 }
 
-function renderContent(wellnessData, activitiesData) {
+function renderContent(wellnessData, activitiesData, scheduleData) {
     // Create sections for wellness and activities
     let html = '';
 
@@ -58,6 +60,15 @@ function renderContent(wellnessData, activitiesData) {
         html += createActivitiesList(activitiesData);
     } else {
         html += '<p class="text-gray-500 text-center py-4">No activities recorded this week yet</p>';
+    }
+
+    // Schedule Section (upcoming sessions)
+    html += '<h2 class="text-2xl font-bold text-gray-800 mb-4 mt-6">📅 Upcoming Sessions</h2>';
+
+    if (scheduleData && scheduleData.length > 0) {
+        html += createScheduleList(scheduleData);
+    } else {
+        html += '<p class="text-gray-500 text-center py-4">No upcoming sessions scheduled yet</p>';
     }
 
     contentDiv.innerHTML = html;
@@ -134,6 +145,26 @@ function createActivitiesList(activities) {
     `;
 }
 
+function createScheduleList(sessions) {
+    return `
+        <div class="space-y-4">
+            ${sessions.map(session => {
+        const date = new Date(session.date);
+        const dayName = getFrenchDayAbbreviation(date.getDay());
+
+        return `
+                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500 hover:bg-blue-100 transition">
+                        <h3 class="font-semibold text-gray-800">${session.title || 'Session'}</h3>
+                        <p class="text-sm text-gray-600 mt-1">📅 ${dayName} - ${formatDate(session.date)}</p>
+                        ${session.time ? `<p class="text-sm text-gray-500">⏰ Time: ${session.time}</p>` : ''}
+                        ${session.description ? `<p class="text-sm text-gray-500 mt-2">${session.description}</p>` : ''}
+                    </div>
+                `;
+    }).join('')}
+        </div>
+    `;
+}
+
 function getFrenchDayAbbreviation(dayIndex) {
     // dayIndex: 0=Sunday, 1=Monday, ..., 6=Saturday
     const frenchDays = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
@@ -142,7 +173,7 @@ function getFrenchDayAbbreviation(dayIndex) {
 
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function createMetricCard(title, value, unit, icon) {
@@ -158,11 +189,6 @@ function formatDuration(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     return `${hours > 0 ? hours + 'h' : ''}${minutes > 0 ? minutes + 'm' : ''}`.trim();
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function getSleepQualityText(quality) {

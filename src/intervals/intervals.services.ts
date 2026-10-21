@@ -2,7 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { IntervalsClient } from "./intervals.client.js";
 import { Wellness } from "./interfaces/Wellness.js";
 import { Activity } from "./interfaces/Activity.js";
-import { AthleteMetrics, IntervalsAthleteDto, IntervalsIcuMapper } from "./mappers/IntervalsIcuMapper.js";
+import { AthleteMetrics, IntervalsAthleteDto, IntervalsIcuMapper, IntervalsPlannedSessionDto, IntervalsPlannedSessionMapper } from "./mappers/IntervalsIcuMapper.js";
+import { PlannedSession } from "./interfaces/TrainingPlan.js";
 
 @Injectable()
 export class IntervalsService {
@@ -53,6 +54,14 @@ export class IntervalsService {
     };
 
     return await this.getActivities(formatDate(startOfWeek), formatDate(endOfWeek));
+  }
+
+  async getNextScheduledSession(): Promise<PlannedSession[]> {
+    const response = await this.client.get<
+      IntervalsPlannedSessionDto[]
+    >(`/athlete/${process.env.ATHLETE_ID}/events`);
+
+    return IntervalsPlannedSessionMapper.toScheduledSessions(response)
   }
 
 }

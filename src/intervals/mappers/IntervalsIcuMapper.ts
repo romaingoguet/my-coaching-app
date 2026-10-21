@@ -1,5 +1,6 @@
 import { Activity } from "../interfaces/Activity.js";
 import { Wellness } from "../interfaces/Wellness.js";
+import { PlannedSession } from "../interfaces/TrainingPlan.js";
 
 export interface IntervalsActivityDto {
   id: number | string;
@@ -213,4 +214,51 @@ export interface IntervalsWellnessDto {
   motivation?: number;
 
   weight?: number;
+}
+
+export interface IntervalsPlannedSessionDto {
+  start_date_local: string; // start_date_local from API
+  name: string; // name from API
+  moving_time: number; // moving_time / 60 from API
+
+  description: string; // description from API
+  workout?: {
+    type: string;
+    description: string;
+  };
+
+  flexibility: 'fixed' | 'flexible' | 'optional';
+}
+
+export interface ScheduledSession {
+  date: string;
+  title: string;
+  durationMinutes: number;
+  objective: string;
+  workout?: {
+    type: string;
+    description: string;
+  };
+  flexibility: 'fixed' | 'flexible' | 'optional';
+}
+
+export class IntervalsPlannedSessionMapper {
+  static toScheduledSession(
+    dto: IntervalsPlannedSessionDto,
+  ): ScheduledSession {
+    return {
+      date: dto.start_date_local,
+      title: dto.name,
+      durationMinutes: dto.moving_time,
+      objective: dto.description,
+      workout: dto.workout,
+      flexibility: dto.flexibility,
+    };
+  }
+
+  static toScheduledSessions(
+    dtos: IntervalsPlannedSessionDto[],
+  ): ScheduledSession[] {
+    return dtos.map((dto) => this.toScheduledSession(dto));
+  }
 }
