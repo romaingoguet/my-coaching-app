@@ -25,4 +25,6 @@ export interface TrainingContext {
   upcomingEvents?: CalendarEvent[];
 
   previousPlan?: TrainingPlan;
+
+  ultraEnduranceContext?: string; // Ultra-endurance cycling philosophy and principles
 }
