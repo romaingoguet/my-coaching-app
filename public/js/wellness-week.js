@@ -1,22 +1,13 @@
-const API_BASE_URL = 'https://my-coaching-app-fjao.onrender.com';
-
 // DOM elements
 const contentDiv = document.getElementById('content');
-
-function getBaseUrl() {
-    if (typeof process === "undefined") {
-        return API_BASE_URL;
-    }
-    return process.env.API_BASE_URL || API_BASE_URL;
-}
 
 async function loadWellnessAndActivities() {
     try {
         // Fetch wellness data, activities, and upcoming sessions in parallel
         const [wellnessResponse, activitiesResponse, scheduleResponse] = await Promise.all([
-            fetch(`${getBaseUrl()}/athlete/wellness`),
-            fetch(`${getBaseUrl()}/athlete/activities`),
-            fetch(`${getBaseUrl()}/athlete/schedule/next`)
+            fetch(`${window.API_BASE_URL || 'https://my-coaching-app-fjao.onrender.com'}/athlete/wellness`),
+            fetch(`${window.API_BASE_URL || 'https://my-coaching-app-fjao.onrender.com'}/athlete/activities`),
+            fetch(`${window.API_BASE_URL || 'https://my-coaching-app-fjao.onrender.com'}/athlete/schedule/next`)
         ]);
 
         if (!wellnessResponse.ok || !activitiesResponse.ok || !scheduleResponse.ok) {

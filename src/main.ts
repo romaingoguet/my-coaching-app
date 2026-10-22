@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module.js';
+import { config } from './app.config.js';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,7 +16,13 @@ async function bootstrap() {
 
   app.useStaticAssets(join(process.cwd(), 'public'));
 
-  await app.listen(process.env.PORT || 3000, '0.0.0.0');
+  // Expose API config to global scope for client-side JavaScript
+  if (typeof window !== 'undefined') {
+    (window as unknown as Record<string, unknown>).APP_CONFIG = config;
+    console.log('App Config loaded:', config);
+  }
+
+  await app.listen(config.port, '0.0.0.0');
 }
 
 await bootstrap();
